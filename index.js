@@ -1,7 +1,10 @@
+require("dotenv").config();
+
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
+const Person = require("./models/person");
 
 app.use(cors());
 app.use(express.static("build"));
@@ -54,23 +57,14 @@ app.post("/api/persons", (request, response) => {
     });
   }
 
-  const duplicate = persons.find((person) => person.name === body.name);
-
-  if (duplicate) {
-    return response.status(409).json({
-      error: "name already exists",
-    });
-  }
-
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number,
-    id: Math.floor(Math.random() * 100000000),
-  };
+  });
 
-  persons = persons.concat(person);
-
-  response.json(person);
+  person.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
 });
 
 app.delete("/api/persons/:id", (request, response) => {
@@ -81,26 +75,32 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((person) => person.id === id);
-
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+  Person.findById(request.params.id)
+    .then((person) => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      response.status(400).send({ error: "malformatted id" });
+    });
 });
 
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((persons) => {
+    response.json(persons);
+  });
 });
 
 app.get("/info", (request, response) => {
-  response.send(
-    `<p>Phonebook has info for ${
-      persons.length
-    } people.</p><p>${new Date()}</p>`
-  );
+  Person.count().then((count) => {
+    response.send(
+      `<p>Phonebook has info for ${count} people.</p><p>${new Date()}</p>`
+    );
+  });
 });
 
 const unknownEndpoint = (request, response) => {
