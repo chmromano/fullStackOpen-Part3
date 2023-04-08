@@ -38,7 +38,7 @@ if (numberOfArguments === 3) {
     number,
   });
 
-  person.save().then((result) => {
+  person.save().then(() => {
     console.log(`added ${name} number ${number} to phonebook`);
     mongoose.connection.close();
   });

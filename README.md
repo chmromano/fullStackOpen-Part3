@@ -7,5 +7,5 @@
 ## Exercise tracking
 
 - [x] phonebookbackend
-- [ ] phonebookdatabase
-- [ ] lint
+- [x] phonebookdatabase
+- [x] lintconfiguration
