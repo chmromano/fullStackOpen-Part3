@@ -1,0 +1,20 @@
+name: Lint NodeJS fullStackOpen-part3
+
+on: pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Node project part3
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: Install dependencies for part3
+        run: npm ci
+      - name: Lint part3
+        run: npm run lint
