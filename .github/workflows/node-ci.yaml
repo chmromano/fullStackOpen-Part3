@@ -1,4 +1,4 @@
-name: Lint NodeJS fullStackOpen-part3
+name: Lint NodeJS fullStackOpen-Part3
 
 on: pull_request
 
